@@ -17,6 +17,9 @@ class ViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // add button to have user input a word
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(promptForAnswer))
+        
         // find a file start.txt if existing
         if let startWordPath = Bundle.main.path(forResource: "start", ofType: "txt") {
             // if it has strings inside
@@ -42,7 +45,41 @@ class ViewController: UITableViewController {
         // reload the tableview data
         tableView.reloadData()
     }
+    
+    // MARK: Handle table view rows and cells
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return usedWords.count
+    }
 
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // create cells with their identifier
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Word", for: indexPath)
+        // set text equal to the correspondent usedWords element
+        cell.textLabel?.text = usedWords[indexPath.row]
+        return cell
+    }
+    
+    // MARK: Prompt for answer function
+    @objc func promptForAnswer() {
+        // create a new alert controller
+        let ac = UIAlertController(title: "Enter answer", message: nil, preferredStyle: .alert)
+        // allow user to input text
+        ac.addTextField()
+        // add a way to submit the input text
+        let submitAction = UIAlertAction(title: "Submit", style: .default) { [unowned self, ac] _ in
+            let answer = ac.textFields![0]
+            self.submit(answer: answer.text!)
+        }
+        ac.addAction(submitAction)
+        // present the alert controller
+        present(ac, animated: true)
+    }
 
+    func submit(answer: String) {
+        // TODO: Submit method
+    }
+
+    
+    
 }
 
