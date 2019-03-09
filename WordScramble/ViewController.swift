@@ -80,6 +80,11 @@ class ViewController: UITableViewController {
         // make all answers equal by lowercasing them
         let lowerAnswer = answer.lowercased()
         
+        // store error if existing
+        let errorTitle: String
+        // store error message if existing
+        let errorMessage: String
+        
         // if all of the methods are true
         if isPossible(word: lowerAnswer) {
             if isOriginal(word: lowerAnswer) {
@@ -91,9 +96,26 @@ class ViewController: UITableViewController {
                     let indexPath = IndexPath(row: 0, section: 0)
                     // insert the item at index 0 in a cell at the top of the table
                     tableView.insertRows(at: [indexPath], with: .automatic)
+                    return
+                // handle all cases where there's an error
+                } else {
+                    errorTitle = "Word not recognized"
+                    errorMessage = "You can't just make them up, you know!"
                 }
+            } else {
+                errorTitle = "Word used already"
+                errorMessage = "Be more original!"
             }
+        } else {
+            errorTitle = "Word not possible"
+            errorMessage = "You can't spell that word from '\(title!.lowercased())'!"
         }
+        // create an alert controller that displays the error
+        let ac = UIAlertController(title: errorTitle, message: errorMessage, preferredStyle: .alert)
+        // add ok button to allow user to continue
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        // present the alert controller
+        present(ac, animated: true)
     }
     
     // check if input is a correct scramble
