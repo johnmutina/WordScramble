@@ -75,10 +75,38 @@ class ViewController: UITableViewController {
         present(ac, animated: true)
     }
 
+    // MARK: Method to submit answer
     func submit(answer: String) {
-        // TODO: Submit method
+        // make all answers equal by lowercasing them
+        let lowerAnswer = answer.lowercased()
+        
+        // if all of the methods are true
+        if isPossible(word: lowerAnswer) {
+            if isOriginal(word: lowerAnswer) {
+                if isReal(word: lowerAnswer) {
+                    // insert the word at index 0 of the usedWords array
+                    usedWords.insert(answer, at: 0)
+                    
+                    // set the indexPath to 0, meaning the first cell of the tableView
+                    let indexPath = IndexPath(row: 0, section: 0)
+                    // insert the item at index 0 in a cell at the top of the table
+                    tableView.insertRows(at: [indexPath], with: .automatic)
+                }
+            }
+        }
     }
-
+    
+    func isPossible(word: String) -> Bool {
+        return true
+    }
+    
+    func isOriginal(word: String) -> Bool {
+        return true
+    }
+    
+    func isReal(word: String) -> Bool {
+        return true
+    }
     
     
 }
