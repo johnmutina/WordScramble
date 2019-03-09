@@ -96,16 +96,43 @@ class ViewController: UITableViewController {
         }
     }
     
+    // check if input is a correct scramble
     func isPossible(word: String) -> Bool {
+        // store the word in a variable
+        var tempWord = title?.lowercased()
+        
+        // loop through the letters
+        for letter in word {
+            // if you find one of the letters of the input word
+            if let pos = tempWord?.range(of: String(letter)) {
+                // remove it
+                tempWord?.remove(at: pos.lowerBound)
+            } else {
+                // if you don't find it, return false
+                return false
+            }
+        }
+        // reachable only if false is never reached
         return true
     }
     
+    // check if the world hasn't been used already
     func isOriginal(word: String) -> Bool {
-        return true
+        // if the array contains the word return false (!true)
+        return !usedWords.contains(word)
     }
     
+    // check if is real English
     func isReal(word: String) -> Bool {
-        return true
+        // use subclass text checker
+        let checker = UITextChecker()
+        // check the whole word
+        let range = NSMakeRange(0, word.utf16.count)
+        // look for misspellings in the input word, from index 0 for english language
+        let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
+        
+        // if you don't find misspellings, return true
+        return misspelledRange.location == NSNotFound
     }
     
     
