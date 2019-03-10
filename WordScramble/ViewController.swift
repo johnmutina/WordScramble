@@ -80,38 +80,37 @@ class ViewController: UITableViewController {
         // make all answers equal by lowercasing them
         let lowerAnswer = answer.lowercased()
         
-        // store error if existing
-        let errorTitle: String
-        // store error message if existing
-        let errorMessage: String
+        // initialize array to store error title and message
+        var error = [String]()
         
         // if all of the methods are true
         if isPossible(word: lowerAnswer) {
             if isOriginal(word: lowerAnswer) {
                 if isReal(word: lowerAnswer) {
-                    // insert the word at index 0 of the usedWords array
-                    usedWords.insert(answer, at: 0)
-                    
-                    // set the indexPath to 0, meaning the first cell of the tableView
-                    let indexPath = IndexPath(row: 0, section: 0)
-                    // insert the item at index 0 in a cell at the top of the table
-                    tableView.insertRows(at: [indexPath], with: .automatic)
-                    return
-                // handle all cases where there's an error
+                    if isDifferent(word: lowerAnswer){
+                        // insert the word at index 0 of the usedWords array
+                        usedWords.insert(answer, at: 0)
+                        
+                        // set the indexPath to 0, meaning the first cell of the tableView
+                        let indexPath = IndexPath(row: 0, section: 0)
+                        // insert the item at index 0 in a cell at the top of the table
+                        tableView.insertRows(at: [indexPath], with: .automatic)
+                        return
+                    // handle all cases where there's an error
+                    } else {
+                        error = showError("startWord")
+                    }
                 } else {
-                    errorTitle = "Word not recognized"
-                    errorMessage = "You can't just make them up, you know!"
+                    error = showError("notReal")
                 }
             } else {
-                errorTitle = "Word used already"
-                errorMessage = "Be more original!"
+                error = showError("notOriginal")
             }
         } else {
-            errorTitle = "Word not possible"
-            errorMessage = "You can't spell that word from '\(title!.lowercased())'!"
+            error = showError("notPossible")
         }
         // create an alert controller that displays the error
-        let ac = UIAlertController(title: errorTitle, message: errorMessage, preferredStyle: .alert)
+        let ac = UIAlertController(title: error[0], message: error[1], preferredStyle: .alert)
         // add ok button to allow user to continue
         ac.addAction(UIAlertAction(title: "OK", style: .default))
         // present the alert controller
@@ -120,6 +119,7 @@ class ViewController: UITableViewController {
     
     // check if input is a correct scramble
     func isPossible(word: String) -> Bool {
+        
         // store the word in a variable
         var tempWord = title?.lowercased()
         
@@ -146,6 +146,10 @@ class ViewController: UITableViewController {
     
     // check if is real English
     func isReal(word: String) -> Bool {
+        // TODO: Prevent the user from inserting empty or short answers
+        if word.count <= 2 {
+            return false
+        }
         // use subclass text checker
         let checker = UITextChecker()
         // check the whole word
@@ -156,6 +160,35 @@ class ViewController: UITableViewController {
         // if you don't find misspellings, return true
         return misspelledRange.location == NSNotFound
     }
+    
+    // MARK: isDifferent method
+    func isDifferent(word: String) -> Bool {
+        
+        // store the start word
+        let tempWord = title?.lowercased()
+        
+        // TODO: Prevent user from inserting the start word
+        if word == tempWord {
+            return false
+        }
+        return true
+    }
+    
+    // TODO: Refactor Error Messages
+    func showError(_ error: String) -> [String] {
+        var errorMessages = [String]()
+        if error == "notReal" {
+            errorMessages = ["Word not recognized", "It has to be a real word with at least 3 characters."]
+        } else if error == "startWord" {
+            errorMessages = ["Same as start word", "You can't input the start word!"]
+        } else if error == "notOriginal" {
+            errorMessages = ["Word used already", "Be more original!"]
+        } else if error == "notPossible" {
+            errorMessages = ["Word not possible", "You can't spell that word from '\(title!.lowercased())'!"]
+        }
+        return errorMessages
+    }
+    
     
     
 }
