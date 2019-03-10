@@ -20,20 +20,31 @@ class ViewController: UITableViewController {
         // add button to have user input a word
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(promptForAnswer))
         
+        // TODO: Refactoring access to word file to better handle error
         // find a file start.txt if existing
         if let startWordPath = Bundle.main.path(forResource: "start", ofType: "txt") {
             // if it has strings inside
             if let startWords = try? String(contentsOfFile: startWordPath) {
                 // break them up when you find a return and store them in the array
                 allWords = startWords.components(separatedBy: "\n")
-            // otherwise
+                // check if array has been populated
+                if allWords.count == 0 {
+                    // if not, use default word list
+                    loadDefaultWords()
+                }
             } else {
-                // use a default parameter
-                allWords = ["silkworm"]
+                loadDefaultWords()
             }
+        } else {
+            loadDefaultWords()
         }
         // load the initial game state
         startGame()
+    }
+    
+    // TODO: Create array of words in case retrieving start.txt fails
+    func loadDefaultWords() {
+        allWords = ["angelica", "botanist", "captured", "dressers", "emphasis", "filtrate"]
     }
     
     // MARK: Define the initial game state
